@@ -6,6 +6,7 @@
 #include "testFiles/linkedcard.h"
 #include "testFiles/memory.h"
 #include "testFiles/mockSendMessages.h"
+#include "testFiles/mockReceiveMessages.h"
 
 using namespace ::testing; 
 using std::string;
@@ -143,7 +144,6 @@ TEST(HerramientasDeJuego, CrearMatrizAleatoria) {
             EXPECT_TRUE((value >= 0) && (value <= 15));   
         }
     }
-
     delete memory;    
 }
 
@@ -379,7 +379,41 @@ TEST(ComunicacionServerClientes, IntercambioDeNombres) {
     delete sendMessages;
 }
 
+TEST(ComunicacionServerClientes, ObtenerAccionesClientes) {
+    Memory memory;
+    MockReceiveMessages *mockReceiveMessages = new MockReceiveMessages;
+    memory.server = new Server(mockReceiveMessages);
 
+    EXPECT_CALL(*mockReceiveMessages, recv)
+        .Times(AtLeast(7))
+        .WillRepeatedly(Return(4));
 
+    memory.server->buffer = "name";
+    memory.server->readClient(1);
+    EXPECT_STREQ(memory.server->name, "name");
+    EXPECT_TRUE(memory.server->newName);
 
+    memory.server->buffer = "card";
+    memory.server->readClient(1);
+    EXPECT_EQ(memory.server->cardPetition, 4);
+    EXPECT_TRUE(memory.server->newCardPetition);
+    EXPECT_EQ(memory.server->clientPetition, 1);
 
+    memory.server->buffer = "pu1";
+    memory.server->readClient(1);
+    EXPECT_EQ(memory.server->powerUpSelected, 1);
+    EXPECT_EQ(memory.server->clientPowerUp, 1);
+
+    memory.server->buffer = "pu2";
+    memory.server->readClient(1);
+    EXPECT_EQ(memory.server->powerUpSelected, 2);
+    EXPECT_EQ(memory.server->clientPowerUp, 1);
+
+    memory.server->buffer = "pu3";
+    memory.server->readClient(1);
+    EXPECT_EQ(memory.server->powerUpSelected, 3);
+    EXPECT_EQ(memory.server->clientPowerUp, 1);
+    
+
+    delete mockReceiveMessages;
+}

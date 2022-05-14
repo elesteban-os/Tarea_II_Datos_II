@@ -11,6 +11,8 @@ set(Headers
     testFiles/sendmessages.h
     testFiles/mockSendMessages.h
     testFiles/qimage.h
+    testFiles/receivemessages.h
+    testFiles/mockReceiveMessages.h
 )
 
 set(Sources
@@ -23,6 +25,7 @@ set(Sources
     testFiles/sendmessages.cpp
     testFiles/mockSendMessages.cpp
     testFiles/qimage.cpp
+    testFiles/receivemessages.cpp
 )
 
 add_executable(${This} ${Sources})
